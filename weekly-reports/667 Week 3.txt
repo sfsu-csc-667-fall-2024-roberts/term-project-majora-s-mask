@@ -1,0 +1,2 @@
+Completed: front end skeleton with npm.
+TO-DO: Wireframe individual routes. 
