@@ -1,12 +1,41 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
-    <title>Hello from EJS</title>
+    <title>Game Page</title>
     <link rel="stylesheet" href="/css/root.css" />
   </head>
   <body>
+    <header>
+      <nav>
+        <a href="/root">home</a>
+        <a href="/login">login</a>
+        <a href="/register">Sign Up</a>
+      </nav>
+    </header>
     <h1>Hello <%= title %></h1>
+    <main>
+      <div class="game-container">
+        <div class="game-area">
+          <h1>Blitz Bingo</h1>
+          <!-- Game will be implemented here -->
+        </div>
+        <div class="chatroom">
+          <h2>Chatroom</h2>
+          <!-- Chatroom will be implemented here -->
+        </div>
+      </div>
+      <div class = "join-code-form">
+        <form action="/join-game" method="POST">
+          <label for="join-code">Enter Join Code</label>
+          <input type="text" id="join-code" name="joinCode" required />
+        </form>
+      </div>
+      <div class = "server-list">
+        <h2>Available lobbies</h2>
+        <!-- server list will be implemented here -->
+      </div>
+    </main>
     <!-- Use the Webpack-generated bundle -->
     <script src="/js/main.js"></script>
   </body>
-</html>
+

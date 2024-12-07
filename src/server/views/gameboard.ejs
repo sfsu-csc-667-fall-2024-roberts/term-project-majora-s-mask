@@ -1,0 +1,33 @@
+<!-- Shown after lobby starts, game board begins. -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <title>Game Page</title>
+    <link rel="stylesheet" href="/css/root.css" />
+    </head>
+    <body>
+        <header>
+            <a href="/root">home</a>
+            <a href="/login">login</a>
+            <a href="/register">Sign Up</a>
+        </header>
+        <div class="game-container">
+            <div class="game-area">
+                <h2>Blitz Bingo</h2>
+                <div class="grid">
+                    <%for (let i = 0; i < 5; i++) {%>
+                        <div class="row">
+                            <%for (let j = 0; j < 5; j++) {%>
+                                <div class="cell" id="cell-<%= i %>-<%= j %>">
+                                    <!--Cell number content goes here-->>
+                                </div>
+                            <%}%>
+                        </div>
+                </div>
+                <div class"players">
+                    <h2>Players</h2>
+                    <!--Add player handlers here, use <li>-->
+                </div>
+            </div>
+        </div>
+    </body>
