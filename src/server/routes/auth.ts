@@ -1,5 +1,6 @@
 import express from "express";
-import pool from "../../Database/setup_db"; // Import the database connection
+import bcrypt from "bcrypt";
+import pool from "../db/connections"; // Import the database connection
 
 const router = express.Router();
 
@@ -13,7 +14,6 @@ router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    // Check if the username or email already exists
     const [existingUser] = await pool.query(
       "SELECT * FROM users WHERE username = ? OR email = ?",
       [username, email]
@@ -26,16 +26,14 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert the new user into the database
     await pool.query(
       "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
       [username, email, hashedPassword]
     );
 
-    res.redirect("/auth/login"); // Redirect to the login page
+    res.redirect("/auth/login");
   } catch (error) {
     console.error("Error during registration:", error);
     res.status(500).render("auth/register", {
@@ -55,7 +53,6 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Check if the user exists in the database
     const [userRows] = await pool.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
@@ -69,7 +66,6 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Compare the password with the hashed password in the database
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
@@ -79,11 +75,22 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Assuming sessions are configured
-    // req.session.user = { id: user.user_id, username: user.username };
+    // Store user in session
+    req.session.user = {
+      id: user.user_id,
+      username: user.username,
+    };
 
-    res.redirect("/"); // Redirect to the homepage on success
+    console.log("Session created:", req.session);
+
+    res.redirect("/");
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).render("auth/login", {
-      title: "Login
+      title: "Login",
+      error: "An error occurred during login. Please try again.",
+    });
+  }
+});
+
+export default router;

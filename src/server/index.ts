@@ -4,12 +4,16 @@ import express from "express";
 import httpErrors from "http-errors";
 import morgan from "morgan";
 import * as path from "path";
+import authRoutes from "./routes/auth";
+import { Request, Response } from "express";
 
 // Milestone 3 Libraries
 import connectLiveReload from "connect-livereload";
 import livereload from "livereload";
 
 import rootRoutes from "./routes/root";
+
+import sessionMiddleware from "./config/session";
 
 dotenv.config();
 
@@ -32,6 +36,7 @@ app.set("view engine", "ejs");
 
 // Routes
 app.use("/", rootRoutes);
+app.use("/auth", authRoutes);
 
 // 404 Error Handler
 app.use((_request, _response, next) => {

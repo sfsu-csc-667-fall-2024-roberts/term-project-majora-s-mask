@@ -19,9 +19,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/connect-livereload": "^0.6.3",
     "@types/cookie-parser": "^1.4.7",
     "@types/express": "^5.0.0",
+    "@types/express-flash": "^0.0.5",
+    "@types/express-mysql-session": "^3.0.6",
+    "@types/express-session": "^1.18.0",
     "@types/livereload": "^0.9.5",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.7.9",
@@ -40,13 +44,20 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "connect-mysql": "^4.0.0",
+    "connect-pg-simple": "^10.0.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^5.0.1",
+    "express-flash": "^0.0.2",
+    "express-mysql-session": "^3.0.3",
     "express-session": "^1.18.1",
     "http-errors": "^2.0.0",
+    "knex": "^3.1.0",
     "morgan": "^1.10.0",
-    "mysql2": "^3.11.4"
+    "mysql2": "^3.11.4",
+    "pg": "^8.13.1"
   }
 }
