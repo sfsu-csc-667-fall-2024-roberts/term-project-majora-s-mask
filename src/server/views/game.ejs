@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/root.css" />
+    <script>
+      const userId = <%- JSON.stringify(userId) %>; // Embed userId
+      const games = <%- JSON.stringify(games || []) %>; // Embed games array
+    </script>
+    <script src="/js/game.js" defer></script>
+    <!-- Game logic -->
+  </head>
+  <body>
+    <header>
+      <h1>Bingo Game</h1>
+      <p>Welcome, user ID: <%= userId %></p>
+      <a href="/auth/logout">Logout</a>
+      <a href="/">Go to Home</a>
+    </header>
+    <main>
+      <h2>Your Games</h2>
+
+      <!-- Section for starting a new game -->
+      <button id="start-game">Start New Game</button>
+
+      <!-- Section for joining a game -->
+      <div id="join-game">
+        <h3>Join a Game</h3>
+        <label for="join-game-id">Enter Game ID:</label>
+        <input type="text" id="join-game-id" placeholder="Game ID" />
+        <button id="join-game-button">Join Game</button>
+      </div>
+
+      <!-- Section for listing user's games -->
+      <div id="game-options" style="display: none">
+        <h3>Select a Game</h3>
+        <ul id="game-list"></ul>
+      </div>
+
+      <!-- Section for the game board -->
+      <div id="game-board">
+        <p>Loading game board...</p>
+      </div>
+
+      <!-- Section for turn information -->
+      <div id="turn-info" style="margin-top: 20px"></div>
+    </main>
+  </body>
+</html>

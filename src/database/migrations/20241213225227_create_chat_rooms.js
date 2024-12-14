@@ -9,7 +9,8 @@ exports.up = async function (knex) {
       .integer("game_id")
       .unsigned()
       .references("game_id")
-      .inTable("game_boards");
+      .inTable("games") // Reference the `games` table
+      .onDelete("CASCADE"); // Ensure cascading deletes
   });
 };
 

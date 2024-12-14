@@ -1,63 +1,39 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import pool from "../db/connections"; // Import the database connection
+import db from "../config/db";
+import "express-session";
+const authRoutes = express.Router();
 
-const router = express.Router();
-
-// Render the registration form
-router.get("/register", (_req, res) => {
-  res.render("auth/register", { title: "Register" });
-});
-
-// Handle registration form submission
-router.post("/register", async (req, res) => {
-  const { username, email, password } = req.body;
-
-  try {
-    const [existingUser] = await pool.query(
-      "SELECT * FROM users WHERE username = ? OR email = ?",
-      [username, email]
-    );
-
-    if ((existingUser as any[]).length > 0) {
-      return res.status(400).render("auth/register", {
-        title: "Register",
-        error: "Username or email already exists!",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await pool.query(
-      "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-      [username, email, hashedPassword]
-    );
-
-    res.redirect("/auth/login");
-  } catch (error) {
-    console.error("Error during registration:", error);
-    res.status(500).render("auth/register", {
-      title: "Register",
-      error: "An error occurred during registration. Please try again.",
-    });
-  }
-});
-
-// Render the login form
-router.get("/login", (_req, res) => {
+authRoutes.get("/login", (_req: Request, res: Response) => {
   res.render("auth/login", { title: "Login" });
 });
 
-// Handle login form submission
-router.post("/login", async (req, res) => {
+// Logout route
+authRoutes.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error destroying session:", err);
+      return res.status(500).send("Could not log out. Please try again.");
+    }
+
+    res.clearCookie("connect.sid", {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    res.redirect("/auth/login");
+  });
+});
+
+/**
+ * Login route.
+ */
+authRoutes.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const [userRows] = await pool.query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
-
-    const user = (userRows as any[])[0];
+    const user = await db("users").where("email", email).first();
 
     if (!user) {
       return res.status(401).render("auth/login", {
@@ -75,13 +51,14 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Store user in session
-    req.session.user = {
-      id: user.user_id,
-      username: user.username,
-    };
+    console.log("Session before setting user:", req.session);
 
-    console.log("Session created:", req.session);
+    // Set the user object in the session
+    if (req.session) {
+      (req.session as any).userId = user.user_id;
+    } else {
+      console.error("Session is not initialized!");
+    }
 
     res.redirect("/");
   } catch (error) {
@@ -93,4 +70,4 @@ router.post("/login", async (req, res) => {
   }
 });
 
-export default router;
+export { authRoutes };

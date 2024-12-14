@@ -8,8 +8,8 @@ exports.up = async function (knex) {
     table
       .integer("game_id")
       .unsigned()
-      .references("game_id")
-      .inTable("game_boards")
+      .references("game_id") // Reference the `games` table instead
+      .inTable("games")
       .onDelete("CASCADE");
     table
       .integer("user_id")
@@ -17,9 +17,10 @@ exports.up = async function (knex) {
       .references("user_id")
       .inTable("users")
       .onDelete("CASCADE");
-    table.text("numbers").notNullable();
-    table.text("marked_numbers");
-    table.boolean("is_winner").defaultTo(false);
+    table.text("numbers").notNullable(); // Store the card's bingo numbers
+    table.text("marked_numbers"); // Store the marked numbers
+    table.boolean("is_winner").defaultTo(false); // Indicates if this card is a winner
+    table.timestamp("created_at").defaultTo(knex.fn.now()); // Timestamp for record creation
   });
 };
 

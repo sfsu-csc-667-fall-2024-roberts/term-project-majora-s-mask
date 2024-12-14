@@ -8,10 +8,11 @@ exports.up = async function (knex) {
     table
       .integer("game_id")
       .unsigned()
-      .references("game_id")
-      .inTable("game_boards");
-    table.integer("number").notNullable();
-    table.timestamp("called_at").defaultTo(knex.fn.now());
+      .references("game_id") // Reference the `games` table instead
+      .inTable("games")
+      .onDelete("CASCADE"); // Ensure cascading deletes
+    table.integer("number").notNullable(); // Store the random number
+    table.timestamp("called_at").defaultTo(knex.fn.now()); // Timestamp when the number was called
   });
 };
 

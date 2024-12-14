@@ -9,12 +9,14 @@ exports.up = async function (knex) {
       .integer("chat_room_id")
       .unsigned()
       .references("chat_room_id")
-      .inTable("chat_rooms");
+      .inTable("chat_rooms")
+      .onDelete("CASCADE"); // Ensure cascading deletes
     table
       .integer("sender_user_id")
       .unsigned()
       .references("user_id")
-      .inTable("users");
+      .inTable("users")
+      .onDelete("CASCADE"); // Ensure cascading deletes
     table.text("content").notNullable();
     table.timestamp("timestamp").defaultTo(knex.fn.now());
   });
