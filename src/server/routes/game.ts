@@ -3,7 +3,7 @@ import { createGame } from "../handlers/gameHandlers";
 import { RequestHandler } from "express";
 import db from "../config/db";
 import { generateBingoBoard } from "../utils/bingoUtils";
-import { broadcastToGame } from "../config/websockets";
+import { sendGameUpdate } from "../config/websockets";
 
 const gameRoutes = express.Router();
 
@@ -160,15 +160,6 @@ const crossNumberHandler: RequestHandler = async (
           .update({ crossed_numbers: JSON.stringify(crossedNumbers) });
       }
     }
-    // Re-fetch all crossed numbers for the game to broadcast
-    const updatedCrossedNumbers = boards.map((board) =>
-      typeof board.crossed_numbers === "string"
-        ? JSON.parse(board.crossed_numbers)
-        : board.crossed_numbers || []
-    );
-
-    // Flatten the array of arrays into a single array
-    const allCrossedNumbers = updatedCrossedNumbers.flat();
 
     // Determine the next player's turn
     const allPlayerIds = boards.map((b) => b.player_id);
@@ -181,23 +172,8 @@ const crossNumberHandler: RequestHandler = async (
       current_turn_user_id: nextPlayerId,
     });
 
-    // WebSocket Broadcast: Notify clients about the updated state
-    const updatedGameState = {
-      type: "updateTurn",
-      data: {
-        currentTurnUserId: nextPlayerId,
-        crossedNumbers: allCrossedNumbers,
-      },
-    };
-    broadcastToGame(gameId, updatedGameState);
-    // Explicitly notify the joining player
-    broadcastToGame(gameId, {
-      type: "reloadState",
-      data: {
-        board: updatedCrossedNumbers,
-        currentTurnUserId: nextPlayerId,
-      },
-    });
+    // Use `sendGameUpdate` to broadcast the updated state
+    sendGameUpdate(gameId, boards, nextPlayerId);
 
     console.log(
       `Player ${userId} played ${number}. Next turn: ${nextPlayerId}`
@@ -209,7 +185,6 @@ const crossNumberHandler: RequestHandler = async (
     res.status(500).json({ error: "Failed to cross number and update turn." });
   }
 };
-
 // Attach the handler to the route
 gameRoutes.post("/:gameId/cross", crossNumberHandler);
 
@@ -281,6 +256,10 @@ const joinGameHandler: RequestHandler = async (req, res) => {
     };
     await db("game_boards").insert(newBoard);
 
+    const boards = await db("game_boards").where({ game_id: gameId });
+
+    // Broadcast the updated state
+    sendGameUpdate(gameId, boards, game.current_turn_user_id);
     res.status(201).json({ message: "User joined the game successfully." });
   } catch (error) {
     console.error("Error joining game:", error);

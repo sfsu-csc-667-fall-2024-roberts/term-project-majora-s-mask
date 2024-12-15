@@ -11,7 +11,17 @@ export function generateBingoBoard(): number[][] {
   }
   return board;
 }
-
+export function safeJSONParse(data: any): any {
+  try {
+    if (typeof data === "string") {
+      return JSON.parse(data);
+    }
+    return data; // Already an array or object
+  } catch (error) {
+    console.error("Invalid JSON encountered:", data);
+    return []; // Default to an empty array
+  }
+}
 /**
  * Shuffle an array of numbers using Fisher-Yates algorithm.
  * @param array - Array of numbers to shuffle

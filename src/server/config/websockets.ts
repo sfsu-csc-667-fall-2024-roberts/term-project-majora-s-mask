@@ -1,46 +1,38 @@
-import WebSocket, { WebSocketServer, WebSocket as WS } from "ws";
+import { WebSocket, WebSocketServer } from "ws";
+import { safeJSONParse } from "../utils/bingoUtils";
 
-// Create a WebSocket server
-const wss = new WebSocketServer({ noServer: true });
-
-// Define a type for the clients map
-interface ClientsMap {
-  [gameId: string]: WS[];
+// Define a type for a game board
+interface GameBoard {
+  board: string;
+  crossed_numbers: string;
 }
 
-// Store WebSocket clients mapped to their gameId
-const clients: ClientsMap = {};
+// Function to send game updates
+function sendGameUpdate(
+  gameId: string,
+  boards: GameBoard[],
+  currentTurnUserId: number
+) {
+  const formattedBoards = boards.map((board: GameBoard) => ({
+    board: safeJSONParse(board.board), // Parse board safely
+    crossedNumbers: safeJSONParse(board.crossed_numbers), // Parse crossed_numbers safely
+  }));
 
-// WebSocket connection handler
-wss.on("connection", (ws: WS, req: any) => {
-  const gameId = req.url.split("?gameId=")[1]; // Extract the gameId from the URL
-
-  if (!clients[gameId]) {
-    clients[gameId] = [];
-  }
-
-  clients[gameId].push(ws);
-
-  ws.on("message", (message: string) => {
-    const parsedMessage = JSON.parse(message);
-
-    if (parsedMessage.type === "updateTurn") {
-      // Broadcast turn update
-      broadcastToGame(gameId, parsedMessage.data);
-    }
-
-    if (parsedMessage.type === "chat") {
-      // Broadcast chat messages
-      broadcastToGame(gameId, parsedMessage.data);
-    }
+  broadcastToGame(gameId, {
+    type: "updateTurn",
+    data: {
+      boards: formattedBoards,
+      currentTurnUserId,
+    },
   });
-
-  ws.on("close", () => {
-    if (clients[gameId]) {
-      clients[gameId] = clients[gameId].filter((client) => client !== ws);
-    }
+  broadcastToGame(gameId, {
+    type: "reloadState",
   });
-});
+}
+
+// WebSocket server logic
+const wss = new WebSocketServer({ noServer: true });
+const clients: { [gameId: string]: WebSocket[] } = {};
 
 // Broadcast to all clients in a game
 function broadcastToGame(gameId: string, data: any): void {
@@ -53,4 +45,18 @@ function broadcastToGame(gameId: string, data: any): void {
   }
 }
 
-export { wss, broadcastToGame };
+wss.on("connection", (ws, req: any) => {
+  const gameId = req.url.split("?gameId=")[1];
+
+  if (!clients[gameId]) {
+    clients[gameId] = [];
+  }
+
+  clients[gameId].push(ws);
+
+  ws.on("close", () => {
+    clients[gameId] = clients[gameId].filter((client) => client !== ws);
+  });
+});
+
+export { wss, broadcastToGame, sendGameUpdate };

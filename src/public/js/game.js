@@ -69,7 +69,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (response.ok) {
         alert("Joined game successfully.");
-        window.location.reload();
+        connectWebSocket(gameId); // Connect WebSocket for the joined game
+        loadGameBoard(gameId, true); // Reload the board dynamically
       } else {
         const error = await response.json();
         alert(`Failed to join game: ${error.message}`);
@@ -124,9 +125,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function loadGameBoard(gameId) {
     try {
       const response = await fetch(`/game/${gameId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch game data.");
+      }
+
       const data = await response.json();
 
-      gameBoardDiv.innerHTML = ""; // Clear existing content
+      // Clear the game board
+      gameBoardDiv.innerHTML = "";
+
+      // Check if board data exists
+      if (!data.board || !Array.isArray(data.board)) {
+        gameBoardDiv.innerHTML = "<p>No game board data available.</p>";
+        return;
+      }
 
       // Render the bingo board
       data.board.forEach((row) => {
@@ -139,11 +151,11 @@ document.addEventListener("DOMContentLoaded", async () => {
           cellDiv.className = "bingo-cell";
 
           // Mark crossed-out numbers
-          if (data.crossedNumbers.includes(number)) {
+          if (data.crossedNumbers && data.crossedNumbers.includes(number)) {
             cellDiv.classList.add("crossed-out");
           }
 
-          // Attach event listener only if it's the player's turn
+          // Attach event listener if it's the player's turn
           if (data.currentTurnUserId === userId) {
             cellDiv.addEventListener("click", () =>
               crossNumber(gameId, number)
@@ -156,7 +168,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         gameBoardDiv.appendChild(rowDiv);
       });
 
-      // Update turn information
+      // Update turn info
       const turnInfo = document.getElementById("turn-info");
       if (turnInfo) {
         turnInfo.textContent =
@@ -187,17 +199,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       const message = JSON.parse(event.data);
 
       if (message.type === "updateTurn") {
-        const { currentTurnUserId, crossedNumbers } = message.data;
+        const { currentTurnUserId, boards } = message.data;
 
-        // Ensure `crossedNumbers` is an array
-        if (Array.isArray(crossedNumbers)) {
-          // Update the crossed numbers on the board
-          document.querySelectorAll(".bingo-cell").forEach((cell) => {
-            if (crossedNumbers.includes(parseInt(cell.textContent))) {
-              cell.classList.add("crossed-out");
-            }
-          });
-        }
+        const allCrossedNumbers = boards
+          .map((board) => board.crossedNumbers || [])
+          .flat();
+
+        // Update the crossed numbers dynamically
+        document.querySelectorAll(".bingo-cell").forEach((cell) => {
+          const number = parseInt(cell.textContent);
+          if (allCrossedNumbers.includes(number)) {
+            cell.classList.add("crossed-out");
+          }
+        });
 
         // Update the turn information
         const turnInfo = document.getElementById("turn-info");
@@ -208,9 +222,10 @@ document.addEventListener("DOMContentLoaded", async () => {
               : `Waiting for Player ${currentTurnUserId}'s turn.`;
         }
       }
+
       if (message.type === "reloadState") {
         console.log("Reloading game state...");
-        loadGameBoard(gameId); // Reload the board state for new player
+        loadGameBoard(gameId, true); // Force full reload for state changes like joining a game
       }
     };
 
