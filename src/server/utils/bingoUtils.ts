@@ -22,3 +22,19 @@ export function shuffle(array: number[]): void {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+
+// Helper to check win condition
+export function checkWinCondition(board: number[][], crossedNumbers: number[]) {
+  // Check horizontal lines
+  for (const row of board) {
+    if (row.every((num) => crossedNumbers.includes(num))) return true;
+  }
+
+  // Check vertical lines
+  for (let col = 0; col < board[0].length; col++) {
+    const column = board.map((row) => row[col]);
+    if (column.every((num) => crossedNumbers.includes(num))) return true;
+  }
+
+  return false;
+}

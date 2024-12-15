@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const gameList = document.getElementById("game-list");
   const joinGameInput = document.getElementById("join-game-id");
   const joinGameButton = document.getElementById("join-game-button");
+  let ws; // WebSocket instance
 
   // Initialize games on load
   if (games.length === 0) {
@@ -38,6 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const data = await response.json();
         console.log(`Game created successfully (Game ID: ${data.gameId})`);
         alert("Game created successfully!");
+        connectWebSocket(data.gameId); // Connect WebSocket for the new game
         loadGameBoard(data.gameId); // Automatically load the new game
       } else {
         const error = await response.json();
@@ -67,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (response.ok) {
         alert("Joined game successfully.");
-        loadGameBoard(gameId); // Load the joined game
+        window.location.reload();
       } else {
         const error = await response.json();
         alert(`Failed to join game: ${error.message}`);
@@ -87,7 +89,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         game.created_at
       ).toLocaleString()}`;
       gameItem.dataset.gameId = game.game_id; // Attach game ID to the list item
-      gameItem.addEventListener("click", () => loadGameBoard(game.game_id));
+      gameItem.addEventListener("click", () => {
+        connectWebSocket(game.game_id); // Connect WebSocket for the selected game
+        loadGameBoard(game.game_id);
+      });
       gameList.appendChild(gameItem);
     });
   }
@@ -104,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       if (response.ok) {
-        loadGameBoard(gameId); // Reload the board after crossing a number
+        console.log("Number crossed successfully."); // Server will broadcast update via WebSocket
       } else {
         const error = await response.json();
         alert(`Failed to cross number: ${error.message}`);
@@ -163,5 +168,58 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.error("Failed to load game board:", err);
       alert("Failed to load game board. Please try again.");
     }
+  }
+
+  // Function to connect WebSocket
+  function connectWebSocket(gameId) {
+    if (ws) {
+      ws.close(); // Close any existing WebSocket connection
+    }
+
+    ws = new WebSocket(`ws://localhost:3000?gameId=${gameId}`);
+
+    ws.onopen = async () => {
+      console.log("Connected to WebSocket server.");
+      await loadGameBoard(gameId);
+    };
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+
+      if (message.type === "updateTurn") {
+        const { currentTurnUserId, crossedNumbers } = message.data;
+
+        // Ensure `crossedNumbers` is an array
+        if (Array.isArray(crossedNumbers)) {
+          // Update the crossed numbers on the board
+          document.querySelectorAll(".bingo-cell").forEach((cell) => {
+            if (crossedNumbers.includes(parseInt(cell.textContent))) {
+              cell.classList.add("crossed-out");
+            }
+          });
+        }
+
+        // Update the turn information
+        const turnInfo = document.getElementById("turn-info");
+        if (turnInfo) {
+          turnInfo.textContent =
+            currentTurnUserId === userId
+              ? "It's your turn!"
+              : `Waiting for Player ${currentTurnUserId}'s turn.`;
+        }
+      }
+      if (message.type === "reloadState") {
+        console.log("Reloading game state...");
+        loadGameBoard(gameId); // Reload the board state for new player
+      }
+    };
+
+    ws.onclose = () => {
+      console.log("Disconnected from WebSocket server.");
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
   }
 });

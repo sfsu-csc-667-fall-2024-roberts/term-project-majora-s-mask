@@ -3,6 +3,7 @@ import { createGame } from "../handlers/gameHandlers";
 import { RequestHandler } from "express";
 import db from "../config/db";
 import { generateBingoBoard } from "../utils/bingoUtils";
+import { broadcastToGame } from "../config/websockets";
 
 const gameRoutes = express.Router();
 
@@ -110,7 +111,8 @@ const getGameByIdHandler: RequestHandler<{ gameId: string }> = async (
 gameRoutes.get("/:gameId", getGameByIdHandler);
 
 // Explicitly define the RequestHandler type
-const crossNumberHandler: express.RequestHandler = async (
+
+const crossNumberHandler: RequestHandler = async (
   req: Request,
   res: Response
 ) => {
@@ -158,6 +160,15 @@ const crossNumberHandler: express.RequestHandler = async (
           .update({ crossed_numbers: JSON.stringify(crossedNumbers) });
       }
     }
+    // Re-fetch all crossed numbers for the game to broadcast
+    const updatedCrossedNumbers = boards.map((board) =>
+      typeof board.crossed_numbers === "string"
+        ? JSON.parse(board.crossed_numbers)
+        : board.crossed_numbers || []
+    );
+
+    // Flatten the array of arrays into a single array
+    const allCrossedNumbers = updatedCrossedNumbers.flat();
 
     // Determine the next player's turn
     const allPlayerIds = boards.map((b) => b.player_id);
@@ -168,6 +179,24 @@ const crossNumberHandler: express.RequestHandler = async (
     // Update the current turn in the `games` table
     await db("games").where({ game_id: gameId }).update({
       current_turn_user_id: nextPlayerId,
+    });
+
+    // WebSocket Broadcast: Notify clients about the updated state
+    const updatedGameState = {
+      type: "updateTurn",
+      data: {
+        currentTurnUserId: nextPlayerId,
+        crossedNumbers: allCrossedNumbers,
+      },
+    };
+    broadcastToGame(gameId, updatedGameState);
+    // Explicitly notify the joining player
+    broadcastToGame(gameId, {
+      type: "reloadState",
+      data: {
+        board: updatedCrossedNumbers,
+        currentTurnUserId: nextPlayerId,
+      },
     });
 
     console.log(

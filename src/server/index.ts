@@ -5,6 +5,8 @@ import { authRoutes, gameRoutes, registerRoutes } from "./routes/index";
 import { isAuthenticated } from "./middleware/auth";
 import db from "./config/db";
 import path from "path";
+import http from "http";
+import { wss } from "./config/websockets"; // Import WebSocket server setup
 
 const app = express();
 
@@ -14,7 +16,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session setup
 const PGStore = connectPgSimple(session);
-
 app.use(
   session({
     store: new PGStore({
@@ -32,6 +33,7 @@ app.use(
     },
   })
 );
+
 // Static files
 const staticPath = path.join(__dirname, "../public");
 app.use(express.static(staticPath));
@@ -41,7 +43,6 @@ app.set("views", path.join(__dirname, "views")); // Set the directory for views
 app.set("view engine", "ejs");
 
 // Routes
-
 app.use("/auth", authRoutes);
 app.use("/auth", registerRoutes); // Ensure `/auth/register` is accessible
 app.use("/game", isAuthenticated, gameRoutes);
@@ -58,8 +59,18 @@ app.get("/", (req, res) => {
   });
 });
 
+// Create HTTP server
+const server = http.createServer(app);
+
+// Attach WebSocket server to HTTP server
+server.on("upgrade", (request, socket, head) => {
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit("connection", ws, request);
+  });
+});
+
 // Start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
