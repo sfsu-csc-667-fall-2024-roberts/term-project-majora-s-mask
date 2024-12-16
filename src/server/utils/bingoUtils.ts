@@ -34,16 +34,26 @@ export function shuffle(array: number[]): void {
 }
 
 // Helper to check win condition
-export function checkWinCondition(board: number[][], crossedNumbers: number[]) {
-  // Check horizontal lines
-  for (const row of board) {
-    if (row.every((num) => crossedNumbers.includes(num))) return true;
+export function checkWinCondition(
+  board: number[][],
+  crossedNumbers: number[]
+): boolean {
+  const size = board.length;
+
+  // Check each row
+  for (let i = 0; i < size; i++) {
+    const row = board[i];
+    if (row.every((num) => crossedNumbers.includes(num))) {
+      return true;
+    }
   }
 
-  // Check vertical lines
-  for (let col = 0; col < board[0].length; col++) {
-    const column = board.map((row) => row[col]);
-    if (column.every((num) => crossedNumbers.includes(num))) return true;
+  // Check each column
+  for (let j = 0; j < size; j++) {
+    const column = board.map((row) => row[j]);
+    if (column.every((num) => crossedNumbers.includes(num))) {
+      return true;
+    }
   }
 
   return false;

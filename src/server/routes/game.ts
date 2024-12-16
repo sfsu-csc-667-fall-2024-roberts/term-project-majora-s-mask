@@ -2,8 +2,8 @@ import express, { Request, Response } from "express";
 import { createGame } from "../handlers/gameHandlers";
 import { RequestHandler } from "express";
 import db from "../config/db";
-import { generateBingoBoard } from "../utils/bingoUtils";
-import { sendGameUpdate } from "../config/websockets";
+import { generateBingoBoard, checkWinCondition } from "../utils/bingoUtils";
+import { sendGameUpdate, broadcastToGame } from "../config/websockets";
 
 const gameRoutes = express.Router();
 
@@ -175,6 +175,34 @@ const crossNumberHandler: RequestHandler = async (
           .where({ board_id: board.board_id })
           .update({ crossed_numbers: JSON.stringify(crossedNumbers) });
       }
+    }
+
+    // Check if the current player (who just played) has won
+    const currentPlayerBoard = await db("game_boards")
+      .where({ game_id: gameId, player_id: userId })
+      .first();
+
+    const playerBoard = currentPlayerBoard.board;
+    const playerCrossed = currentPlayerBoard.crossed_numbers || "[]";
+
+    if (checkWinCondition(playerBoard, playerCrossed)) {
+      // Update the game status to finished
+      await db("games")
+        .where({ game_id: gameId })
+        .update({ status: "completed" });
+
+      // Notify all players that the current player has won
+      sendGameUpdate(gameId, boards, userId);
+
+      // You might send a special message indicating a win
+      broadcastToGame(gameId, {
+        type: "gameFinished",
+        winner: userId,
+      });
+
+      console.log(`Player ${userId} has won the game ${gameId}.`);
+      res.status(200).json({ message: "You have won the game!" });
+      return;
     }
 
     // Determine the next player's turn

@@ -227,6 +227,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("Reloading game state...");
         loadGameBoard(gameId, true); // Force full reload for state changes like joining a game
       }
+      if (message.type === "gameFinished") {
+        alert(`Player ${message.winner} has won the game!`);
+      }
     };
 
     ws.onclose = () => {
