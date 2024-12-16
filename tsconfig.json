@@ -16,6 +16,6 @@
     "allowJs": true, // Allow JavaScript files to be part of the project
     "skipLibCheck": true // Skip type checks for declaration files
   },
-  "include": ["src/**/*"], // Include all TypeScript files in the `src` directory
+  "include": ["src/**/*", "src/types/global.d.ts"], // Include all TypeScript files in the `src` directory
   "exclude": ["node_modules", "dist", "**/*.test.ts"] // Exclude `node_modules`, `dist`, and test files
 }

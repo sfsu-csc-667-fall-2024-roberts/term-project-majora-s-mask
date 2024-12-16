@@ -68,20 +68,34 @@ const getGameByIdHandler: RequestHandler<{ gameId: string }> = async (
 ) => {
   try {
     const { gameId } = req.params;
+    const userId = (req.session as any)?.userId;
 
-    // Fetch game data, including the board and crossed numbers
+    if (!userId) {
+      res.status(401).json({ error: "User not logged in." });
+      return;
+    }
+
+    // Fetch the user's board for the specified game
     const gameBoard = await db("game_boards")
-      .where({ game_id: gameId })
+      .where({ game_id: gameId, player_id: userId })
       .first();
 
+    if (!gameBoard) {
+      res
+        .status(404)
+        .json({ error: "User does not have a board in this game." });
+      return;
+    }
+
+    // Fetch the game details
     const game = await db("games").where({ game_id: gameId }).first();
 
-    if (!gameBoard || !game) {
+    if (!game) {
       res.status(404).json({ error: "Game not found." });
       return;
     }
 
-    // Debugging: Log the fetched data
+    // Debugging: Log the fetched data (remove or comment out in production)
     console.log("Fetched game board:", gameBoard);
     console.log("Fetched game:", game);
 
@@ -90,6 +104,7 @@ const getGameByIdHandler: RequestHandler<{ gameId: string }> = async (
       typeof gameBoard.board === "string"
         ? JSON.parse(gameBoard.board)
         : gameBoard.board;
+
     const crossedNumbers =
       typeof gameBoard.crossed_numbers === "string"
         ? JSON.parse(gameBoard.crossed_numbers)
@@ -104,6 +119,7 @@ const getGameByIdHandler: RequestHandler<{ gameId: string }> = async (
   } catch (error) {
     console.error("Error fetching game data:", error);
     res.status(500).json({ error: "Failed to fetch game data." });
+    return;
   }
 };
 
