@@ -2,6 +2,7 @@ import express from "express";
 import session from "express-session";
 const connectPgSimple = require("connect-pg-simple");
 import { authRoutes, gameRoutes, registerRoutes } from "./routes/index";
+import chatRoutes from "./routes/chat"; // Import chat routes
 import { isAuthenticated } from "./middleware/auth";
 import db from "./config/db";
 import path from "path";
@@ -46,6 +47,7 @@ app.set("view engine", "ejs");
 app.use("/auth", authRoutes);
 app.use("/auth", registerRoutes); // Ensure `/auth/register` is accessible
 app.use("/game", isAuthenticated, gameRoutes);
+app.use("/chat", isAuthenticated, chatRoutes);
 
 app.get("/dashboard", isAuthenticated, (req, res) => {
   res.render("dashboard", { userId: (req.session as any)?.userId });
