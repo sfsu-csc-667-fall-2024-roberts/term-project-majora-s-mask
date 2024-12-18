@@ -85,7 +85,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
- 
   //Handle chat messages in the game
   chatButton.addEventListener("click", async () => {
     const message = chatInput.value.trim();
@@ -264,6 +263,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const messageDiv = document.createElement("div");
         messageDiv.textContent = `[${new Date(timestamp).toLocaleTimeString()}] User ${userId}: ${content}`; // Format message with timestamp
         chatMessagesDiv.appendChild(messageDiv); // Append message to chat
+        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
       }
       if (message.type === "gameFinished") {
         alert(`Player ${message.winner} has won the game!`);
