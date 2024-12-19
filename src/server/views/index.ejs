@@ -3,28 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/root.css" />
+  <title>Bingo Game</title>
+  <link rel="stylesheet" href="/css/root.css">
 </head>
 <body>
   <header>
-    <h1>Welcome to the Homepage</h1>
-    <% if (userId) { %>
-      <p>Logged in as user ID: <%= userId %></p>
-      <a href="/auth/logout">Logout</a>
-      <!-- Show "Go to Game" only if the user is logged in -->
-      <a href="/game">Go to Game</a>
-    <% } else { %>
-      <a href="/auth/login">Login</a> | <a href="/auth/register">Register</a>
-    <% } %>
+    <h1>Welcome to the Bingo Game</h1>
+    <nav>
+      <% if (userId) { %>
+        <a href="/auth/logout" class="nav-link">Logout</a>
+        <a href="/game" class="button-link">Play Bingo</a>
+      <% } else { %>
+        <a href="/auth/login" class="nav-link">Login</a>
+        <a href="/auth/register" class="nav-link">Register</a>
+      <% } %>
+    </nav>
   </header>
+
   <main>
-    <p>This is the homepage. Add more dynamic content here!</p>
-    <% if (userId) { %>
-      <p>Start playing the Bingo game! Click on the "Go to Game" link above to get started.</p>
-    <% } else { %>
-      <p>Please log in or register to access the game.</p>
-    <% } %>
+    <section class="hero">
+      <h2>Experience the Fun of Bingo!</h2>
+      <p>Join a vibrant community of players and test your luck. Sign up today to start playing!</p>
+      <% if (!userId) { %>
+        <a href="/auth/register" class="button-link highlight">Get Started</a>
+      <% } %>
+    </section>
+
+    <section class="about">
+      <h2>About the Game</h2>
+      <p>Bingo is a timeless game of chance that brings people together. Our online platform provides a seamless and interactive experience,
+         letting you enjoy the game anywhere, anytime.</p>
+    </section>
+
+    <section class="how-to-play">
+      <h2>How to Play</h2>
+      <ul>
+        <li>Sign up or log in to create your account.</li>
+        <li>Click "Play Bingo" to join a game.</li>
+        <li>Mark your numbers as they are called. Complete a row, column, or diagonal to win!</li>
+        <li>Shout "Bingo!" to claim your prize.</li>
+      </ul>
+    </section>
   </main>
+
+  <footer>
+    <p>&copy; 2024 Bingo Game. All rights reserved.</p>
+    <p>Contact us: <a href="mailto:support@bingogame.com" class="footer-link">support@bingogame.com</a></p>
+  </footer>
 </body>
 </html>
