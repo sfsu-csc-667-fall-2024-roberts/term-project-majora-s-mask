@@ -1,3 +1,21 @@
+.bingo-cell {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #000;
+    text-align: center;
+    line-height: 40px;
+    margin: 2px;
+    cursor: pointer;
+}
+
+.bingo-cell.crossed-out {
+    background-color: #f00;
+    color: #fff;
+    text-decoration: line-through;
+    pointer-events: none;
+}
+
 /* General Styling */
 body {
     font-family: 'Arial', sans-serif;
