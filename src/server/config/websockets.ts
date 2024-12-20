@@ -53,6 +53,23 @@ wss.on("connection", (ws, req: any) => {
   }
 
   clients[gameId].push(ws);
+  ws.on("message", (data: string) => {
+    try {
+      const parsed = JSON.parse(data);
+
+      if (parsed.type === "chatMessage") {
+        broadcastToGame(gameId, {
+          type: "chatMessage",
+          userId: parsed.userId,
+          message: parsed.message,
+        });
+      }
+
+      // Handle other message types if needed...
+    } catch (err) {
+      console.error("Failed to parse message:", err);
+    }
+  });
 
   ws.on("close", () => {
     clients[gameId] = clients[gameId].filter((client) => client !== ws);

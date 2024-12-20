@@ -5,9 +5,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const gameList = document.getElementById("game-list");
   const joinGameInput = document.getElementById("join-game-id");
   const joinGameButton = document.getElementById("join-game-button");
-  const chatInput = document.getElementById("chat-input");
-  const chatButton = document.getElementById("chat-button");
-  const chatMessagesDiv = document.getElementById("chat-messages");
   let ws; // WebSocket instance
 
   // Initialize games on load
@@ -53,8 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert("An unexpected error occurred while creating the game.");
     }
   });
- 
- 
+
   // Handle joining a game
   joinGameButton.addEventListener("click", async () => {
     const gameId = joinGameInput.value.trim();
@@ -82,33 +78,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
       console.error("Error joining game:", err);
       alert("An unexpected error occurred while joining the game.");
-    }
-  });
-
-  //Handle chat messages in the game
-  chatButton.addEventListener("click", async () => {
-    const message = chatInput.value.trim();
-    if (!message) {
-      alert("Please enter a message.");
-      return;
-    }
-
-    try {
-      const response = await fetch(`/chat/${gameId}`, {
-        method: 'POST',
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({message}),
-      });
-      
-      if (response.ok) {
-        chatInput.value = ""; //clear field
-      } else {
-        const error = await response.json();
-        alert(`Failed to send message: ${error.message}`);
-      }
-    } catch (err) {
-      console.error("Error sending message:", err);
-      alert("An unexpected error occurred while sending the message.");
     }
   });
 
@@ -257,13 +226,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (message.type === "reloadState") {
         console.log("Reloading game state...");
         loadGameBoard(gameId, true); // Force full reload for state changes like joining a game
-      }
-      if (message.type === "chatMessage") { 
-        const { userId, content, timestamp } = message.message;
-        const messageDiv = document.createElement("div");
-        messageDiv.textContent = `[${new Date(timestamp).toLocaleTimeString()}] User ${userId}: ${content}`; // Format message with timestamp
-        chatMessagesDiv.appendChild(messageDiv); // Append message to chat
-        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
       }
       if (message.type === "gameFinished") {
         alert(`Player ${message.winner} has won the game!`);
