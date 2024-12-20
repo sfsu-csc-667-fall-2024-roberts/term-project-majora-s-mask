@@ -8,7 +8,6 @@ import {
   registerRoutes,
 } from "./routes/index";
 import { isAuthenticated } from "./middleware/auth";
-import db from "./config/db";
 import path from "path";
 import http from "http";
 import { wss } from "./config/websockets"; // Import WebSocket server setup

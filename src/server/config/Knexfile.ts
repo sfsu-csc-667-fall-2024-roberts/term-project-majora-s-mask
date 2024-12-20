@@ -6,12 +6,7 @@ dotenv.config();
 const config: { [key: string]: Knex.Config } = {
   development: {
     client: "pg",
-    connection: {
-      host: process.env.DB_HOST || "127.0.0.1",
-      user: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
-    },
+    connection: process.env.DATABASE_URL, // Use DATABASE_URL directly,
     migrations: {
       directory: path.resolve(__dirname, "../../database/migrations"), // Absolute path to migrations
     },

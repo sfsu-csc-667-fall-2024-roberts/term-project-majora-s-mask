@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"No tests yet\"",
     "start": "node dist/server/index.js",
-    "start:dev": "nodemon --exec ts-node src/server/index.ts --watch src",
+    "start:dev": "concurrently --raw \"npx knex migrate:latest\" \"nodemon --exec ts-node src/server/index.ts --watch src\"",
     "prepare": "husky install",
     "build": "webpack --config webpack.config.ts",
     "build:dev": "webpack --config webpack.config.ts --mode development --watch"
