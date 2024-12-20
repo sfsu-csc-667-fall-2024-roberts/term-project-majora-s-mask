@@ -15,3 +15,259 @@
     text-decoration: line-through;
     pointer-events: none;
 }
+
+/* General Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #f7f7fa, #eaf2f8);
+    color: #333;
+    line-height: 1.6;
+}
+
+header {
+    text-align: center;
+    padding: 20px;
+    background-color: #4caf50;
+    border-bottom: 2px solid #388e3c;
+    color: white;
+}
+
+header h1 {
+    margin: 10px 0;
+    font-size: 2.2em;
+    color: white;
+}
+
+nav {
+    margin-top: 10px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #ffffff;
+    margin: 0 15px;
+    font-weight: bold;
+    background-color: #388e3c;
+    padding: 8px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+    background-color: #2e7d32;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #ffeb3b;
+    color: #333;
+    border-bottom: 3px solid #fbc02d;
+}
+
+.hero h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.hero p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.hero .button-link {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.hero .button-link:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+}
+
+/* About Section */
+.about {
+    padding: 40px 20px;
+    background-color: #f1f8e9;
+    color: #333;
+}
+
+.about h2 {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+.about p {
+    text-align: center;
+    font-size: 1.2em;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+/* How to Play Section */
+.how-to-play {
+    padding: 40px 20px;
+    background-color: #e3f2fd;
+    color: #333;
+}
+
+.how-to-play h2 {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+.how-to-play ul {
+    list-style-type: none;
+    padding: 0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.how-to-play ul li {
+    background: #bbdefb;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 4px;
+    text-align: left;
+    font-size: 1.1em;
+    color: #333;
+}
+
+/* Form Page Styling */
+.form-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    gap: 40px;
+}
+
+.form-container {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border: 2px solid #4caf50;
+}
+
+.form-container h2 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    color: #4caf50;
+}
+
+.form-container p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    color: #388e3c;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    transition: border 0.3s ease;
+}
+
+input:focus {
+    border-color: #007bff;
+}
+
+button {
+    background-color: #f57c00;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #e65100;
+    transform: translateY(-2px);
+}
+
+/* Info Section Styling */
+.info-section {
+    text-align: center;
+    background: #fff3e0;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%;
+    border: 2px solid #f57c00;
+}
+
+.info-section h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #f57c00;
+}
+
+.info-section p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.info-section .button-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.info-section .button-link:hover {
+    background-color: #0056b3;
+}
+
+/* Footer Styling */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+    margin-top: 40px;
+}
+
+footer a.footer-link {
+    color: #ffeb3b;
+    text-decoration: none;
+}
+
+footer a.footer-link:hover {
+    color: #fbc02d;
+}

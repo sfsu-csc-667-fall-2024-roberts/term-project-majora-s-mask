@@ -9,6 +9,7 @@
       const userId = <%- JSON.stringify(userId) %>; // Embed userId
       const games = <%- JSON.stringify(games || []) %>; // Embed games array
     </script>
+    <script src="/js/chat.js" defer></script>
     <script src="/js/game.js" defer></script>
     <!-- Game logic -->
   </head>
@@ -46,6 +47,31 @@
 
       <!-- Section for turn information -->
       <div id="turn-info" style="margin-top: 20px"></div>
+
+      <!-- Chat Section -->
+      <div id="chat-container" style="margin-top: 20px">
+        <h3>Chat</h3>
+        <div
+          id="chat-messages"
+          style="
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 200px;
+            overflow-y: scroll;
+          "
+        >
+          <!-- Messages will be appended here dynamically -->
+        </div>
+        <div id="chat-input">
+          <input
+            type="text"
+            id="chat-message"
+            placeholder="Type your message..."
+            style="width: 80%; padding: 5px"
+          />
+          <button id="send-message" style="padding: 5px 10px">Send</button>
+        </div>
+      </div>
     </main>
   </body>
 </html>

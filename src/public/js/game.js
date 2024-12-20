@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         alert("Game created successfully!");
         connectWebSocket(data.gameId); // Connect WebSocket for the new game
         loadGameBoard(data.gameId); // Automatically load the new game
+        connectChatWebSocket(data.gameId);
       } else {
         const error = await response.json();
         alert(error.message || "Failed to create game.");
@@ -71,6 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         alert("Joined game successfully.");
         connectWebSocket(gameId); // Connect WebSocket for the joined game
         loadGameBoard(gameId, true); // Reload the board dynamically
+        connectChatWebSocket(gameId); // Connect chat WebSocket for the joined game
       } else {
         const error = await response.json();
         alert(`Failed to join game: ${error.message}`);

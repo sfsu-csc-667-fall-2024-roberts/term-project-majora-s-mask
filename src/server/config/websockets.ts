@@ -1,5 +1,6 @@
 import { WebSocket, WebSocketServer } from "ws";
 import { safeJSONParse } from "../utils/bingoUtils";
+import { retrieveAndBroadcastMessage } from "../routes/chat";
 
 // Define a type for a game board
 interface GameBoard {
@@ -45,6 +46,7 @@ function broadcastToGame(gameId: string, data: any): void {
   }
 }
 
+// WebSocket connection logic
 wss.on("connection", (ws, req: any) => {
   const gameId = req.url.split("?gameId=")[1];
 
@@ -53,6 +55,19 @@ wss.on("connection", (ws, req: any) => {
   }
 
   clients[gameId].push(ws);
+
+  ws.on("message", (message) => {
+    const parsedMessage = JSON.parse(message.toString());
+    if (!parsedMessage) {
+      console.error("Invalid message received:", message);
+      return;
+    }
+
+    const { userId, content } = parsedMessage;
+
+    // Delegate the message to chat.ts for processing
+    retrieveAndBroadcastMessage(gameId, userId, content);
+  });
 
   ws.on("close", () => {
     clients[gameId] = clients[gameId].filter((client) => client !== ws);
