@@ -9,7 +9,7 @@ const mode =
 
 const config: webpack.Configuration = {
   entry: {
-    main: path.join(process.cwd(), "src", "client", "main.ts"),
+    main: path.join(process.cwd(), "src", "client", "main.js"),
   },
   mode,
   output: {
