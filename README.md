@@ -7,3 +7,13 @@
 - Jeremy Wong
 - Ayesha Irum
 - Anshaj Vats
+
+## Rules 
+- Game room consists of 4 players minimum, max room size of [placeholder].
+- Number range for cards: 1-25. +5 to the range for each player added past 4.
+- Each person’s card is randomized, in accordance to the number range 
+- Any number visible on a players turn is pickable. 
+1) When a player picks a number, other players will see which number is picked.
+2) All players with the number on their cards must also click on the number within a certain time period (5 seconds, can be changed).
+3) Failure to do so forfeits their ability to select the number and they must choose the same number to confirm on their card
+4) Game continues until player obtains a bingo. 
