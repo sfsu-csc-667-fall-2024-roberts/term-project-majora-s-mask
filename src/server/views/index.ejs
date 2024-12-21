@@ -6,51 +6,51 @@
   <title>Bingo Game</title>
   <link rel="stylesheet" href="/css/root.css">
 </head>
-<body>
-  <header>
-    <h1>Welcome to the Bingo!</h1>
-    <nav>
-      <% if (userId) { %>
-        <a href="/auth/logout" class="bubble-button">Logout</a>
-        <a href="/game" class="bubble-button">Play Bingo</a>
-      <% } else { %>
-        <a href="/auth/login" class="bubble-button">Login</a>
-        <a href="/auth/register" class="bubble-button">Register</a>
-      <% } %>
-    </nav>
-  </header>
+<body class="background">
+  <div class="content-wrapper">
+    <header>
+      <h1>Welcome to the Bingo!</h1>
+      <nav>
+        <% if (userId) { %>
+          <a href="/auth/logout" class="bubble-button">Logout</a>
+          <a href="/game" class="bubble-button">Play Bingo</a>
+        <% } else { %>
+          <a href="/auth/login" class="bubble-button">Login</a>
+          <a href="/auth/register" class="bubble-button">Register</a>
+        <% } %>
+      </nav>
+    </header>
+    <main class="main-container">
+      <!-- Hero Section -->
+      <section class="hero">
+        <h2>Experience the Fun of Bingo!</h2>
+        <p>Join a vibrant community of players and test your luck. Sign up today to start playing!</p>
+        <% if (!userId) { %>
+          <a href="/auth/register" class="bubble-button">Get Started</a>
+        <% } %>
+      </section>
 
-  <main class="main-container">
-    <!-- Hero Section -->
-    <section class="hero">
-      <h2>Experience the Fun of Bingo!</h2>
-      <p>Join a vibrant community of players and test your luck. Sign up today to start playing!</p>
-      <% if (!userId) { %>
-        <a href="/auth/register" class="bubble-button">Get Started</a>
-      <% } %>
-    </section>
+      <!-- About the Game Section -->
+      <section class="index-bubble">
+        <h2>About the Game</h2>
+        <p>Bingo is a timeless game of chance that brings people together. Our online platform provides a seamless and interactive experience, letting you enjoy the game anywhere, anytime.</p>
+      </section>
 
-    <!-- About the Game Section -->
-    <section class="index-bubble">
-      <h2>About the Game</h2>
-      <p>Bingo is a timeless game of chance that brings people together. Our online platform provides a seamless and interactive experience, letting you enjoy the game anywhere, anytime.</p>
-    </section>
-
-    <!-- How to Play Section -->
-    <section class="index-bubble">
-      <h2>How to Play</h2>
-      <ul class="how-to-play-list">
-        <li class="how-to-play-bubble">Sign up or log in to create your account.</li>
-        <li class="how-to-play-bubble">Click "Play Bingo" to join a game.</li>
-        <li class="how-to-play-bubble">Mark your numbers as they are called. Complete a row or column to win!</li>
-        <li class="how-to-play-bubble">Shout "Bingo!" to claim your prize.</li>
-      </ul>
-    </section>
-  </main>
-
-  <footer>
-    <p>&copy; 2024 Bingo Game. All rights reserved.</p>
-    <p>Contact us: <a href="mailto:support@bingogame.com" class="footer-link">support@bingogame.com</a></p>
-  </footer>
+      <!-- How to Play Section -->
+      <section class="index-bubble">
+        <h2>How to Play</h2>
+        <ul class="how-to-play-list">
+          <li class="how-to-play-bubble">Sign up or log in to create your account.</li>
+          <li class="how-to-play-bubble">Click "Play Bingo" to join a game.</li>
+          <li class="how-to-play-bubble">Mark your numbers as they are called. Complete a row or column to win!</li>
+          <li class="how-to-play-bubble">Shout "Bingo!" to claim your prize.</li>
+        </ul>
+      </section>
+    </main>
+    <footer>
+      <p>&copy; 2024 Bingo Game. All rights reserved.</p>
+      <p>Contact us: <a href="mailto:support@bingogame.com" class="footer-link">support@bingogame.com</a></p>
+    </footer>
+  </div>
 </body>
 </html>

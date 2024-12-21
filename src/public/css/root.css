@@ -7,12 +7,46 @@ body {
     color: #333;
     line-height: 1.6;
 }
+/* Add background image for the entire page */
+.background {
+    background-image: url('../assets/bingo3.avif'); /* Adjust the path as necessary */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+}
+
+/* Ensure content stands out against the background */
+.content-wrapper {
+    background: rgba(255, 255, 255, 0.9); /* White overlay for content */
+    border-radius: 15px;
+    margin: 20px auto;
+    max-width: 1200px; /* Adjust as needed */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+}
+
+header, footer {
+    background: rgba(0, 0, 0, 0.8); /* Dark background for header/footer */
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+header h1, footer p {
+    margin: 0;
+}
+
+main {
+    margin: 20px 0;
+}
 
 /* Header Styling */
 header {
     text-align: center;
     padding: 20px;
-    background: linear-gradient(90deg, #43cea2, #185a9d); /* Vibrant Green Gradient */
+    background: linear-gradient(90deg, #43cea2, #185a9d); 
     color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 0 0 15px 15px;
@@ -232,13 +266,30 @@ footer a.footer-link:hover {
     width: 300px; /* Set width for right panel */
 }
 
-/* Game Action Sections (Start/Join Game) */
+/* Start and Join Game Button Styling */
+
 .game-action {
     background: rgba(255, 255, 255, 0.9);
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     text-align: center;
+}
+
+.game-action button {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #5cb85c, #4cae4c); /* Initial Green Gradient */
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.game-action button:hover {
+    background: linear-gradient(135deg, #4cae4c, #398439); /* Darker Green on Hover */
+    transform: scale(1.1); /* Slight zoom effect */
 }
 
 /* Chat Section */
