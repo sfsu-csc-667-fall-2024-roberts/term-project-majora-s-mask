@@ -231,6 +231,7 @@ footer a.footer-link:hover {
     padding: 20px;
 }
 
+
 /* Left Panel: Select a Game */
 #game-options {
     background: rgba(255, 255, 255, 0.9);
@@ -239,6 +240,14 @@ footer a.footer-link:hover {
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     text-align: center;
     width: 200px;
+}
+
+#center-panel {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    flex-grow: 1;           /* Allow it to expand within the container */
+    align-items: center;    /* Center-align the items horizontally */
+    gap: 20px;              /* Add space between game board and turn info */
 }
 
 /* Game Board */
@@ -256,6 +265,18 @@ footer a.footer-link:hover {
     font-size: 1.8em;
     color: #4caf50;
     margin-bottom: 15px;
+}
+
+#turn-info {
+    background: rgba(255, 255, 255, 0.9);
+    
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    text-align: center;
+    font-size: 1.2em;
+    color: #333;
+    max-width: 100px; 
+    width: 100%;      
 }
 
 /* Right Panel: Start/Join Game and Chat */
