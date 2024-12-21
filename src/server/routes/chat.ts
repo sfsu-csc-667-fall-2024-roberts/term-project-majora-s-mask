@@ -1,52 +1,118 @@
-import express from "express";
+import { Router, RequestHandler } from "express";
 import db from "../config/db";
-import { broadcastToGame } from "../config/websockets";
 
-const chatRoutes = express.Router();
+const chatRoutes = Router();
 
-// Save chat messages
-chatRoutes.post("/save-message", async (req, res) => {
-  const { gameId, userId, message } = req.body;
+// Create a chat room for a game
+const createChatHandler: RequestHandler = async (req, res) => {
+  const { gameId } = req.body;
 
-  try {
-    // Save the message to the database
-    await db("chat_messages").insert({
-      game_id: gameId,
-      user_id: userId,
-      message,
-    });
-
-    res.status(200).send({ success: true });
-  } catch (error) {
-    console.error("Error saving chat message:", error);
-    res.status(500).send({ success: false, error: "Failed to save message." });
+  if (!gameId) {
+    res.status(400).json({ error: "Game ID is required." });
+    return;
   }
-});
 
-// Retrieve username and broadcast the message
-async function retrieveAndBroadcastMessage(
-  gameId: string,
-  userId: string,
-  message: string
-): Promise<void> {
   try {
-    const user = await db("users").where("user_id", userId).first();
-    if (!user) {
-      console.error(`User not found for userId: ${userId}`);
+    // Check if the game exists
+    const game = await db("games").where({ game_id: gameId }).first();
+
+    if (!game) {
+      res.status(400).json({ error: `Game ID ${gameId} does not exist.` });
       return;
     }
 
-    const username = user.username;
+    // Check if a chat room already exists for the game
+    let chatRoom = await db("chat_rooms").where({ game_id: gameId }).first();
 
-    // Broadcast the message
-    broadcastToGame(gameId, {
-      type: "chatMessage",
-      username,
-      content: message,
-    });
+    if (!chatRoom) {
+      // Create a new chat room
+      const [newChatRoom] = await db("chat_rooms")
+        .insert({ game_id: gameId })
+        .returning(["chat_room_id", "game_id"]);
+      chatRoom = newChatRoom;
+      console.log(`Chat room created for game ID ${gameId}`);
+    }
+
+    // Respond with chat room details
+    res.status(201).json({ success: true, chatRoom });
   } catch (error) {
-    console.error("Error retrieving username or broadcasting message:", error);
+    console.error("Error creating chat room:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to create chat room." });
   }
-}
+};
 
-export { chatRoutes, retrieveAndBroadcastMessage };
+// Save a chat message
+const sendMessageHandler: RequestHandler = async (req, res) => {
+  const { chatRoomId, userId, message } = req.body;
+
+  if (!chatRoomId || !userId || !message) {
+    res.status(400).json({
+      success: false,
+      error: "Missing required fields (chatRoomId, userId, message).",
+    });
+    return;
+  }
+
+  try {
+    // Save the message to the database
+    await db("messages").insert({
+      chat_room_id: chatRoomId,
+      sender_user_id: userId,
+      content: message,
+      timestamp: new Date(), // Use current timestamp
+    });
+
+    res
+      .status(201)
+      .json({ success: true, message: "Message sent successfully." });
+  } catch (error) {
+    console.error("Error saving message:", error);
+    res.status(500).json({ success: false, error: "Failed to send message." });
+  }
+};
+
+// Retrieve all messages for a game
+const retrieveMessagesHandler: RequestHandler<{ gameId: string }> = async (
+  req,
+  res
+) => {
+  const { gameId } = req.params;
+
+  if (!gameId) {
+    res.status(400).json({
+      success: false,
+      error: "Missing required parameter: gameId.",
+    });
+    return;
+  }
+
+  try {
+    // Fetch all messages for the given gameId
+    const messages = await db("messages")
+      .join("chat_rooms", "messages.chat_room_id", "chat_rooms.chat_room_id")
+      .where("chat_rooms.game_id", gameId)
+      .select(
+        "messages.message_id",
+        "messages.sender_user_id",
+        "messages.content",
+        "messages.timestamp"
+      )
+      .orderBy("messages.timestamp", "asc"); // Order messages by timestamp
+
+    res.status(200).json({ success: true, messages });
+  } catch (error) {
+    console.error("Error retrieving messages:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to retrieve messages." });
+  }
+};
+
+// Attach handlers to routes
+chatRoutes.post("/create-chat", createChatHandler);
+chatRoutes.post("/send-message", sendMessageHandler);
+chatRoutes.get("/retrieve-messages/:gameId", retrieveMessagesHandler);
+
+export { chatRoutes };

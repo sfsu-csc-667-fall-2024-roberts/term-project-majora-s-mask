@@ -1,6 +1,5 @@
 import { WebSocket, WebSocketServer } from "ws";
 import { safeJSONParse } from "../utils/bingoUtils";
-import { retrieveAndBroadcastMessage } from "../routes/chat";
 
 // Define a type for a game board
 interface GameBoard {
@@ -56,17 +55,42 @@ wss.on("connection", (ws, req: any) => {
 
   clients[gameId].push(ws);
 
-  ws.on("message", (message) => {
+  ws.on("message", async (message) => {
     const parsedMessage = JSON.parse(message.toString());
     if (!parsedMessage) {
       console.error("Invalid message received:", message);
       return;
     }
+    // Destructure the expected fields from the parsed message
+    const { chatRoomId, userId, gameId } = parsedMessage;
+    console.log(`Received WebSocket message for game ${gameId}`);
+    try {
+      // Make the retrieve-messages call
+      const retrieveResponse = await fetch(
+        `http://localhost:3000/chat/retrieve-messages/${gameId}`,
+        { method: "GET" }
+      );
 
-    const { userId, content } = parsedMessage;
+      if (retrieveResponse.ok) {
+        const { messages } = await retrieveResponse.json();
 
-    // Delegate the message to chat.ts for processing
-    retrieveAndBroadcastMessage(gameId, userId, content);
+        // Send the retrieved messages to the frontend
+        ws.send(
+          JSON.stringify({
+            type: "chatUpdate",
+            messages, // Include the retrieved messages
+          })
+        );
+
+        console.log(`Retrieved and sent messages for game ${gameId}`);
+      } else {
+        console.error(
+          `Failed to retrieve messages for game ${gameId}: ${retrieveResponse.statusText}`
+        );
+      }
+    } catch (error) {
+      console.error("Error retrieving messages:", error);
+    }
   });
 
   ws.on("close", () => {

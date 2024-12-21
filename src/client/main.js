@@ -4,6 +4,7 @@ import { loadGameBoard } from "./games/loadGameBoard";
 import { connectChatWebSocket } from "./chat";
 import { initializeGames } from "./initializeGames";
 import { connectWebSocket } from "./games/gameWebSocket";
+let globalChatRoomId = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
   const startGameButton = document.getElementById("start-game");
@@ -15,17 +16,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initializeGames(games, startGameButton, gameBoardDiv, gameOptionsDiv);
   startGameButton.addEventListener("click", () => {
-    createGame(userId, connectWebSocket, loadGameBoard, connectChatWebSocket); // This should log the function definition
+    const chatRoomId = createGame(
+      userId,
+      connectWebSocket,
+      loadGameBoard,
+      connectChatWebSocket
+    ); // This should log the function definition
+    globalChatRoomId = chatRoomId;
   });
 
-  joinGameButton.addEventListener("click", () => {
-    const gameId = gameIdInput.value.trim();
+  joinGameButton.addEventListener("click", async () => {
+    const gameId = joinGameInput.value.trim();
+
+    // Pass chatRoomId to joinGame
     joinGame(
       gameId,
       userId,
       connectWebSocket,
       loadGameBoard,
-      connectChatWebSocket
+      connectChatWebSocket,
+      globalChatRoomId
     );
   });
 });

@@ -10,66 +10,79 @@
       const games = <%- JSON.stringify(games || []) %>; // Embed games array
     </script>
     <script src="/js/main.js" defer></script>
-    <!-- Game logic -->
   </head>
-  <body>
-    <header>
-      <h1>Bingo Game</h1>
-      <p>Welcome, user ID: <%= userId %></p>
-      <a href="/auth/logout">Logout</a>
-      <a href="/">Go to Home</a>
+  <body class="background">
+    <div class="content-wrapper">
+    <header class="header">
+      <div class="header-container">
+        <h1>Bingo Game</h1>
+        <p>Welcome, user ID: <%= userId %></p>
+        <nav>
+          <a href="/auth/logout" class="bubble-button">Logout</a>
+          <a href="/" class="bubble-button">Go to Home</a>
+        </nav>
+      </div>
     </header>
-    <main>
-      <h2>Your Games</h2>
 
-      <!-- Section for starting a new game -->
-      <button id="start-game">Start New Game</button>
-
-      <!-- Section for joining a game -->
-      <div id="join-game">
-        <h3>Join a Game</h3>
-        <label for="join-game-id">Enter Game ID:</label>
-        <input type="text" id="join-game-id" placeholder="Game ID" />
-        <button id="join-game-button">Join Game</button>
-      </div>
-
-      <!-- Section for listing user's games -->
-      <div id="game-options" style="display: none">
+    <main id="game-container">
+      <!-- Left Side: Select a Game -->
+      <section id="game-options">
         <h3>Select a Game</h3>
-        <ul id="game-list"></ul>
-      </div>
-
-      <!-- Section for the game board -->
-      <div id="game-board">
-        <p>Loading game board...</p>
-      </div>
-
-      <!-- Section for turn information -->
-      <div id="turn-info" style="margin-top: 20px"></div>
-
-      <!-- Chat Section -->
-      <div id="chat-container" style="margin-top: 20px">
-        <h3>Chat</h3>
-        <div
-          id="chat-messages"
-          style="
-            border: 1px solid #ccc;
-            padding: 10px;
-            height: 200px;
-            overflow-y: scroll;
-          "
-        >
-          <!-- Messages will be appended here dynamically -->
+        <ul id="game-list">
+        </ul>
+      </section>
+      
+      <!-- Center: Game Board -->
+      <section id="game-board">
+        <h3>Game Board</h3>
+        <div id="board-content">
+          <!-- Bingo cells go here -->
         </div>
-        <div id="chat-input">
+      </section>
+
+      <!-- Right Side: Start/Join Game and Chat -->
+      <div id="right-panel">
+
+        <!-- Turn Info Section -->
+      <section id="turn-info">
+      </section>
+
+        <!-- Start a New Game Section -->
+        <section id="start-game-section" class="game-action">
+          <h3>Start a New Game</h3>
+          <button id="start-game" class="bubble-button">Start Game</button>
+        </section>
+
+        <!-- Join a Game Section -->
+        <section id="join-game-section" class="game-action">
+          <h3>Join a Game</h3>
+          <label for="join-game-id">Enter Game ID:</label>
           <input
             type="text"
-            id="chat-message"
-            placeholder="Type your message..."
-            style="width: 80%; padding: 5px"
+            id="join-game-id"
+            placeholder="Game ID"
+            class="chat-input-box"
           />
-          <button id="send-message" style="padding: 5px 10px">Send</button>
-        </div>
+          <button id="join-game-button" class="bubble-button">Join Game</button>
+        </section>
+
+      <!-- Chat Section -->
+    <!-- Chat Section -->
+        <section id="chat-container">
+          <h3>Chat</h3>
+          <div id="chat-messages">
+            <!-- Messages will be appended dynamically -->
+          </div>
+          <div id="chat-input">
+            <input
+              type="text"
+              id="chat-message"
+              placeholder="Type your message..."
+              class="chat-input-box"
+            />
+            <button id="send-message" class="bubble-button">Send</button>
+          </div>
+        </section>
       </div>
     </main>
   </body>
